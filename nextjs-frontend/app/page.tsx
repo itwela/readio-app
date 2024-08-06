@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Toaster } from "sonner";
 import { useRef } from "react";
 import { useReadioMain } from "./hooks/playingContextProvider";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -16,6 +17,8 @@ export default function Home() {
   // this is just placeholder content.
 
   const { selectedText, setSelectedText } = useReadioMain();
+  const { isPlaying, setIsPlaying } = useReadioMain();
+  
   const card1text = 'Take care of your body. It’s the only place you have to live.” – Jim Rohn'
   const card2text = 'To keep the body in good health is a duty… otherwise we shall not be able to keep our mind strong and clear.” – Buddha'
   const card3text = 'You can’t enjoy wealth if you’re not in good health.” – Anonymous'
@@ -32,12 +35,16 @@ export default function Home() {
       <main className="">
       <div className="w-screen h-screen flex flex-col px-5 justify-start items-start">
         
-        <div className="w-full h-[10%] place-self-start flex justify-start items-center">
+        <AnimatePresence>
+        {!isPlaying && (       
+        <motion.div className="w-full h-[10%] place-self-start flex justify-start items-center">
           <ReadioHeading className="">
             <span className="text-red-500">R</span>
             <span>eadio</span>
           </ReadioHeading>
-        </div>
+        </motion.div>
+        )}
+        </AnimatePresence>
 
         <ReadioCard textcontent={card1text}>
           <p>{card1text}</p>

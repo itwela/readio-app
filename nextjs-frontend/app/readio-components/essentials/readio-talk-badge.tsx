@@ -6,6 +6,7 @@ import { MdPlayCircle, MdPauseCircle } from "react-icons/md";
 import { toast } from "sonner";
 import { HTMLAttributes } from "react";
 import { useRef } from "react";
+import { useReadioMain } from "@/app/hooks/playingContextProvider";
 
 
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
@@ -17,7 +18,7 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 const ReadioTalkBadge = (props: ButtonProps) => {
  
   const { className, children, textcontent, ...rest } = props;
-  const [isPlaying, setIsPlaying] = useState(false);
+  const {isPlaying, setIsPlaying} = useReadioMain();
   const audioRef = useRef<HTMLAudioElement>(null);
 
 
@@ -33,6 +34,10 @@ const ReadioTalkBadge = (props: ButtonProps) => {
     // }
   };
 
+  //▶️ Eleven labs functions ------- START ------- ▶️ -------------
+  
+
+  // step 1️⃣ ---------------
   // Function to make a request to the /api/elevenlabs API route (BLOB response).
   async function getElevenLabsResponse (text: any) {
     const response = await fetch("/api/elevenlabs", {
@@ -56,7 +61,9 @@ const ReadioTalkBadge = (props: ButtonProps) => {
     console.log(data)
     return data;
   };
+
   
+  //  step 2️⃣ ---------------
   async function saveAudioToLocalStorage() {
     try {
       const botVoiceResponse = await getElevenLabsResponse('');
@@ -74,6 +81,7 @@ const ReadioTalkBadge = (props: ButtonProps) => {
     }
   }
   
+  // step 3️⃣ ---------------
   async function playAudioFromLocalStorage() {
     try {
       console.log('Saving audio to local storage..');
@@ -87,8 +95,10 @@ const ReadioTalkBadge = (props: ButtonProps) => {
   
         audio.oncanplaythrough = () => {
           console.log('Audio loaded, playing..');
+          setIsPlaying(true);
           audio.play();
         };
+
   
         audio.onerror = (error) => {
           console.error('Error playing audio:', error);
@@ -100,6 +110,8 @@ const ReadioTalkBadge = (props: ButtonProps) => {
       console.error('Error playing audio from local storage:', error);
     }
   }
+
+  // 🔚  Eleven labs functions ------- END ------- 🔚
 
   // FUnction to download blog
   async function downloadBlob() {
